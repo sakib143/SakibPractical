@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="viewmodel"
+            type="com.example.dubaipractical.ui.home.fragment.HomeViewModel" />
+        <variable
+            name="listner"
+            type="com.example.dubaipractical.ui.home.fragment.HomeFragment" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:padding="@dimen/_10sdp">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Last sync: 15 July 2022"
+                android:textSize="@dimen/_15ssp"
+                android:layout_gravity="end"
+                android:text="@{`Last sync: ` + viewmodel.lastSyncTime}"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sync"
+                android:textAllCaps="false"
+                android:onClick="@{()-> listner.startWorkmanager()}" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                bindEmpList="@{viewmodel.empList}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/adapter_home" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            tools:visibility="visible"
+            android:visibility="@{viewmodel.isViewLoading().booleanValue() ? View.VISIBLE : View.GONE}"/>
+
+
+    </RelativeLayout>
+
+</layout>
