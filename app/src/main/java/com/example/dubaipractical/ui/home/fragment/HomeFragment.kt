@@ -10,6 +10,7 @@ import androidx.work.WorkRequest
 import com.example.dubaipractical.R
 import com.example.dubaipractical.base.BaseBindingFragment
 import com.example.dubaipractical.databinding.FragmentHomeBinding
+import com.example.dubaipractical.utils.Constant
 import com.example.dubaipractical.utils.Coroutines
 import com.example.dubaipractical.utils.toast
 import com.example.dubaipractical.worker.FetchEmpWorker
@@ -49,10 +50,10 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>() {
                 WorkInfo.State.SUCCEEDED -> {
                     val successOutputData = it.outputData
                     Coroutines.main {
-//                        val hasNewDataFound: Boolean = successOutputData.getBoolean(Constant.IS_API_CALLED,false)
-//                        if(hasNewDataFound) {
-//                            viewmodel.getDataFromDB()
-//                        }
+                        val hasNewDataFound: Boolean = successOutputData.getBoolean(Constant.IS_API_CALLED,false)
+                        if(hasNewDataFound) {
+                            viewmodel.getDataFromDB()
+                        }
                     }
                 }
                 WorkInfo.State.FAILED -> {
