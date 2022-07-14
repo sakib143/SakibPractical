@@ -58,9 +58,12 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>() {
                    WorkInfo.State.SUCCEEDED -> {
                        val successOutputData = it.outputData
                        Coroutines.main {
+                           /**
+                            * Once we will fetch latest data from service using Workmanager then will refresh current list
+                            */
                            val hasNewDataFound: Boolean = successOutputData.getBoolean(Constant.IS_API_CALLED,false)
                            if(hasNewDataFound) {
-                               viewmodel.getDataFromDB()
+                               viewmodel.getEmpFromDB()
                            }
                            workManager.cancelWorkById(workRequest.getId());
                        }

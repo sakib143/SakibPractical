@@ -53,7 +53,7 @@ class HomeViewModel @Inject constructor(
                         prefUtils.saveLastSyncTime(globalMethods.getCurrentDateAndTime())
                         /**
                          * As of now we are adding all list to database but in product app, we will add only require data to database.
-                         *  For example, if we have already 500 entris into database and after API call if we have receive 502 list.
+                         *  For example, if we have already 500 entries into database and after API call if we have receive 502 list.
                          *  then will add only new two entried into database.
                          */
                         for (i in apiResponse.indices) {
@@ -64,14 +64,14 @@ class HomeViewModel @Inject constructor(
                 } catch (e: ApiExceptions) {
                     _isViewLoading.postValue(false)
                     _onMessageError.postValue(e.message)
-                    getDataFromDB()
+                    getEmpFromDB()
                 } catch (e: NoInternetException) {
                     _isViewLoading.postValue(false)
                     _onMessageError.postValue(e.message)
-                    getDataFromDB()
+                    getEmpFromDB()
                 }
             } else {
-                getDataFromDB()
+                getEmpFromDB()
             }
         }
     }
@@ -88,7 +88,7 @@ class HomeViewModel @Inject constructor(
      * If internet is not available then from this class
      * if Workmanager operation finished then refresh list from HomeFragment
      */
-    suspend fun getDataFromDB() {
+    suspend fun getEmpFromDB() {
         val empList: List<EmpTable> = repository.getEmpFromDB()
         _empList.postValue(empList)
         getSyncTime()
