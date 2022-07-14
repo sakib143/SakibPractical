@@ -7,12 +7,10 @@ import com.example.dubaipractical.MyApplication
 import com.example.dubaipractical.api.ApiExceptions
 import com.example.dubaipractical.api.NoInternetException
 import com.example.dubaipractical.data.db.table.EmpTable
-import com.example.dubaipractical.data.model.EmpModel
 import com.example.dubaipractical.data.repository.HomeRepository
 import com.example.dubaipractical.utils.Coroutines
 import com.example.dubaipractical.utils.GlobalMethods
 import com.example.dubaipractical.utils.PrefUtils
-import com.google.gson.Gson
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
@@ -28,9 +26,9 @@ class HomeViewModel @Inject constructor(
     private val _onMessageError = MutableLiveData<Any>()
     val onMessageError: LiveData<Any> get() = _onMessageError
 
-    private val _empList: MutableLiveData<List<EmpModel.EmployesModelItem>> =
-        MutableLiveData<List<EmpModel.EmployesModelItem>>()
-    val empList: LiveData<List<EmpModel.EmployesModelItem>>
+    private val _empList: MutableLiveData<List<EmpTable>> =
+        MutableLiveData<List<EmpTable>>()
+    val empList: LiveData<List<EmpTable>>
         get() = _empList
 
     private val _lastSyncTime: MutableLiveData<String> =
@@ -39,10 +37,10 @@ class HomeViewModel @Inject constructor(
         get() = _lastSyncTime
 
     init {
-        callMainCategory()
+        callGetEmpList()
     }
 
-    fun callMainCategory() {
+    fun callGetEmpList() {
         Coroutines.main {
             if (globalMethods.isInternetAvailable(application)) {
                 try {
@@ -53,12 +51,15 @@ class HomeViewModel @Inject constructor(
                     //Save to database.
                     if(apiResponse.size > 0) {
                         prefUtils.saveLastSyncTime(globalMethods.getCurrentDateAndTime())
-                        Coroutines.io {
-                            val gson = Gson()
-                            val json = gson.toJson(apiResponse)
-                            insetEmpListToDB(EmpTable(null, json.toString()))
-                            getSyncTime()
+                        /**
+                         * As of now we are adding all list to database but in product app, we will add only require data to database.
+                         *  For example, if we have already 500 entris into database and after API call if we have receive 502 list.
+                         *  then will add only new two entried into database.
+                         */
+                        for (i in apiResponse.indices) {
+                            insetEmpListToDB(apiResponse.get(i))
                         }
+                        getSyncTime()
                     }
                 } catch (e: ApiExceptions) {
                     _isViewLoading.postValue(false)
@@ -75,22 +76,30 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Save last sync time to share preference to display in home screen
+     */
     fun getSyncTime() {
         _lastSyncTime.postValue(prefUtils.getLastSyncTime())
     }
 
+    /**
+     * This method is used to fetch data from local database in below conditions
+     * If internet is not available then from this class
+     * if Workmanager operation finished then refresh list from HomeFragment
+     */
     suspend fun getDataFromDB() {
-        val data = repository.getItemListOffline()
-        if (data != null) {
-            val gson = Gson()
-            val testModel: EmpModel = gson.fromJson(data.data, EmpModel::class.java)
-            _empList.postValue(testModel)
-            getSyncTime()
-        }
+        val empList: List<EmpTable> = repository.getEmpFromDB()
+        _empList.postValue(empList)
+        getSyncTime()
     }
+
+    /**
+     * Insert emp to Room database
+     */
     suspend fun insetEmpListToDB(data: EmpTable) {
         Coroutines.io {
-            repository.insertItemToDB(data)
+            repository.insertEmpToDB(data)
         }
     }
 }

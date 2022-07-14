@@ -9,7 +9,6 @@ import androidx.annotation.CallSuper
 import androidx.lifecycle.ViewModelProvider
 import com.example.dubaipractical.di.Injectable
 import com.example.dubaipractical.utils.GlobalMethods
-import com.example.dubaipractical.utils.NavigationController
 import com.example.dubaipractical.utils.PrefUtils
 import com.example.dubaipractical.utils.inflate
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -29,11 +28,6 @@ abstract class BaseDialogFragment: BottomSheetDialogFragment(), Injectable {
      * */
     @Inject
     lateinit var prefUtils: PrefUtils
-    /**
-     * Object for @see [NavigationController], which is used to for navigating screens
-     * */
-    @Inject
-    lateinit var navigationController: NavigationController
 
     /**
      * Makeing GlobalMethods injecatable

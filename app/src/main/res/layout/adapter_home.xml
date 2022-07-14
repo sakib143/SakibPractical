@@ -6,7 +6,7 @@
     <data>
         <variable
             name="model"
-            type="com.example.dubaipractical.data.model.EmpModel.EmployesModelItem" />
+            type="com.example.dubaipractical.data.db.table.EmpTable" />
         <variable
             name="position"
             type="java.lang.Integer" />
@@ -20,8 +20,8 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_10sdp"
-            app:cardCornerRadius="@dimen/_10sdp"
+            android:layout_margin="@dimen/_5sdp"
+            app:cardCornerRadius="@dimen/_5sdp"
             app:cardElevation="@dimen/_5sdp"
             tools:visibility="visible">
 
@@ -58,11 +58,11 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/_13ssp"
                     tools:text="hireDate"
-                    android:text="@{model.hireDate}"
                     android:textColor="@color/black"
                     android:drawableLeft="@drawable/ic_calendar"
                     android:drawablePadding="@dimen/_10sdp"
-                    android:layout_marginTop="@dimen/_5sdp" />
+                    android:layout_marginTop="@dimen/_5sdp"
+                    setFormattedDateToDispay="@{model.hireDate}"/>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 

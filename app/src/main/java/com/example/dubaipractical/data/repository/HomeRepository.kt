@@ -4,7 +4,6 @@ import com.example.dubaipractical.api.SafeAPIRequest
 import com.example.dubaipractical.api.WebServiceInterface
 import com.example.dubaipractical.data.db.dao.EmpListDao
 import com.example.dubaipractical.data.db.table.EmpTable
-import com.example.dubaipractical.data.model.EmpModel
 import javax.inject.Inject
 
 class HomeRepository@Inject constructor(
@@ -12,18 +11,18 @@ class HomeRepository@Inject constructor(
     private val dao: EmpListDao,
 ) : SafeAPIRequest() {
 
-    suspend fun callEmpList(): EmpModel {
+    suspend fun callEmpList(): List<EmpTable> {
         return apiRequest {
             webServiceInterface.callEmpList()
         }
     }
 
-    suspend fun getItemListOffline(): EmpTable {
-        val model = dao.getEmpList()
-        return model
+    suspend fun getEmpFromDB(): List<EmpTable> {
+        val empList: List<EmpTable> = dao.getEmpList()
+        return empList
     }
 
-    suspend fun insertItemToDB(data: EmpTable) : Long {
+    suspend fun insertEmpToDB(data: EmpTable) : Long {
         return dao.insertEmpList(data)
     }
 }

@@ -16,28 +16,36 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:padding="@dimen/_10sdp">
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/tvHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/employee_list"
+            android:textSize="@dimen/_20ssp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@color/purple_500"
+            android:paddingTop="@dimen/_7sdp"
+            android:paddingBottom="@dimen/_7sdp"
+            android:gravity="center"
+            />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_below="@+id/tvHeader"
+            android:padding="@dimen/_10sdp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="Last sync: 15 July 2022"
-                android:textSize="@dimen/_15ssp"
                 android:layout_gravity="end"
-                android:text="@{`Last sync: ` + viewmodel.lastSyncTime}"/>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/sync"
-                android:textAllCaps="false"
-                android:onClick="@{()-> listner.startWorkmanager()}" />
+                android:text="@{`Last sync: ` + viewmodel.lastSyncTime}"
+                android:textSize="@dimen/_15ssp"
+                tools:text="Last sync: 15 July 2022" />
 
             <androidx.recyclerview.widget.RecyclerView
                 bindEmpList="@{viewmodel.empList}"
@@ -50,13 +58,24 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/ic_sync"
+            android:layout_margin="@dimen/_10sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:onClickListener="@{()-> listner.startWorkmanager()}" />
+
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             tools:visibility="visible"
+            android:onClick="@{()-> listner.startWorkmanager()}"
             android:visibility="@{viewmodel.isViewLoading().booleanValue() ? View.VISIBLE : View.GONE}"/>
-
 
     </RelativeLayout>
 

@@ -34,31 +34,43 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>() {
         viewmodel.onMessageError.observe(requireActivity(),onMessageErrorObserver)
     }
 
+    /**
+     * If any error encounter during API call then show toast message
+     */
     private val onMessageErrorObserver = Observer<Any> {
         requireActivity().toast(it.toString())
     }
 
+    /**
+     * Start API call to get data from server after press sync button.
+     * Here we have used Workmanager to fetch data from server even app will get killed.
+     */
     fun startWorkmanager() {
-        val workManager = WorkManager.getInstance(requireActivity())
-        var workRequest: WorkRequest = OneTimeWorkRequest.Builder(FetchEmpWorker::class.java).build()
-        workManager.enqueue(workRequest)
+       if( globalMethods.isInternetAvailable(requireActivity())) {
+           val workManager = WorkManager.getInstance(requireActivity())
+           var workRequest: WorkRequest = OneTimeWorkRequest.Builder(FetchEmpWorker::class.java).build()
+           workManager.enqueue(workRequest)
 
-        workManager.getWorkInfoByIdLiveData(workRequest.id).observe(requireActivity(), Observer {
-            if (it?.state == null)
-                return@Observer
-            when (it.state) {
-                WorkInfo.State.SUCCEEDED -> {
-                    val successOutputData = it.outputData
-                    Coroutines.main {
-                        val hasNewDataFound: Boolean = successOutputData.getBoolean(Constant.IS_API_CALLED,false)
-                        if(hasNewDataFound) {
-                            viewmodel.getDataFromDB()
-                        }
-                    }
-                }
-                WorkInfo.State.FAILED -> {
-                }
-            }
-        })
+           workManager.getWorkInfoByIdLiveData(workRequest.id).observe(requireActivity(), Observer {
+               if (it?.state == null)
+                   return@Observer
+               when (it.state) {
+                   WorkInfo.State.SUCCEEDED -> {
+                       val successOutputData = it.outputData
+                       Coroutines.main {
+                           val hasNewDataFound: Boolean = successOutputData.getBoolean(Constant.IS_API_CALLED,false)
+                           if(hasNewDataFound) {
+                               viewmodel.getDataFromDB()
+                           }
+                           workManager.cancelWorkById(workRequest.getId());
+                       }
+                   }
+                   WorkInfo.State.FAILED -> {
+                   }
+               }
+           })
+        } else {
+            requireActivity().toast(Constant.CHECK_INTERNET)
+        }
     }
 }

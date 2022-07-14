@@ -11,7 +11,7 @@ import com.example.dubaipractical.data.db.table.EmpTable
 interface EmpListDao {
 
     @Query("SELECT * FROM emp_table")
-    fun getEmpList(): EmpTable
+    fun getEmpList(): List<EmpTable>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertEmpList(model: EmpTable) : Long

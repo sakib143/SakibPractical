@@ -9,7 +9,6 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.dubaipractical.di.Injectable
 import com.example.dubaipractical.utils.GlobalMethods
-import com.example.dubaipractical.utils.NavigationController
 import com.example.dubaipractical.utils.PrefUtils
 import javax.inject.Inject
 
@@ -20,12 +19,6 @@ import javax.inject.Inject
 abstract class BaseActivity : AppCompatActivity(), Injectable {
 
     var AUTOCOMPLETE_REQUEST_CODE = 1
-
-    /**
-     * Object for @see [NavigationController], which is used to for navigating screens
-     * */
-    @Inject
-    lateinit var navigationController: NavigationController
 
     /**
      * Object for @see [PrefUtils] for preferences storage

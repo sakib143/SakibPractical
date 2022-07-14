@@ -47,7 +47,7 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            outputFileName = "ShoppingApp-${variant.name} ${getTimestamp()}.apk"
+            outputFileName = "DubaiPractical-${variant.name} ${getTimestamp()}.apk"
         }
     }
 }

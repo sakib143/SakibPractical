@@ -9,6 +9,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.concurrent.futures.CallbackToFutureAdapter
 import androidx.core.app.NotificationCompat
@@ -19,6 +20,7 @@ import androidx.work.WorkerParameters
 import com.example.dubaipractical.R
 import com.example.dubaipractical.api.ApiExceptions
 import com.example.dubaipractical.api.NoInternetException
+import com.example.dubaipractical.data.db.table.EmpTable
 import com.example.dubaipractical.data.repository.HomeRepository
 import com.example.dubaipractical.di.worker.IWorkerFactory
 import com.example.dubaipractical.ui.home.HomeActivity
@@ -47,6 +49,9 @@ class FetchEmpWorker(
                     try {
                         val apiCallForEmpList = repo.callEmpList()
                         if(apiCallForEmpList.size > 0) {
+                            for (i in apiCallForEmpList.indices) {
+                                insetEmpListToDB(apiCallForEmpList.get(i))
+                            }
                             val globalMethods = GlobalMethods()
                             val prefUtils = PrefUtils(appContext)
                             prefUtils.saveLastSyncTime(globalMethods.getCurrentDateAndTime())
@@ -54,14 +59,24 @@ class FetchEmpWorker(
                         } else {
                             completer.set(Result.success(createOutputData(false)))
                         }
-                    }catch (e: ApiExceptions) {
+                    } catch (e: ApiExceptions) {
                         appContext.toast(e.message!!)
-                    } catch (e: NoInternetException) {
-                        appContext.toast(e.message!!)
+                        completer.set(Result.success(createOutputData(false)))
                     }
                 }
             }
         }
+    }
+
+    suspend fun insetEmpListToDB(data: EmpTable) {
+        Coroutines.io {
+            repo.insertEmpToDB(data)
+        }
+    }
+
+    override fun onStopped() {
+        super.onStopped()
+        LogM.d("onStopped is calling !!!")
     }
 
     private fun createOutputData(status: Boolean): Data {
@@ -120,7 +135,7 @@ class FetchEmpWorker(
             NotificationCompat.Builder(appContext, NOTIFICATION_CHANNEL_ID)
         return notificationBuilder.setOngoing(true)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("App is running in background")
+            .setContentTitle(appContext.getString(R.string.getting_emp_list))
             .setPriority(NotificationManager.IMPORTANCE_MIN)
             .setCategory(Notification.CATEGORY_SERVICE)
             .setContentIntent(pendingIntent)
