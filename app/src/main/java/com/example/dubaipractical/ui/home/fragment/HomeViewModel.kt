@@ -32,7 +32,7 @@ class HomeViewModel @Inject constructor(
         get() = _empList
 
     private val _lastSyncTime: MutableLiveData<String> =
-        MutableLiveData<String>()
+        MutableLiveData<String>().apply { postValue("") }
     val lastSyncTime: LiveData<String>
         get() = _lastSyncTime
 
